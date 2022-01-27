@@ -1,6 +1,6 @@
 import { WebView } from "react-native-webview";
 import { Profile } from "@types";
-
+import { Constants } from "./constants.ts";
 interface Globals {
   loggedInUser: Profile | undefined;
 }
@@ -14,7 +14,7 @@ export let globals: Globals = {
     followers: 0,
     following: 0,
     description: "",
-    image: "",
+    image: Constants.IPFS_GATEWAY_URL + Constants.DEFAULT_PROFILE_PICTURE,
     verified: false,
   },
 };

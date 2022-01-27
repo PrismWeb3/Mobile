@@ -168,7 +168,6 @@ export const signUp = async (username: string, name: string) => {
     tx: unsignedTX,
   };
   try {
-    console.log(request);
     await post(Constants.PRISM_BASE_URL, "newUser", request);
     globals.loggedInUser = {
       username: username,
@@ -176,13 +175,11 @@ export const signUp = async (username: string, name: string) => {
       followers: 0,
       following: 0,
       description: "",
-      image:
-        "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
+      image: Constants.IPFS_GATEWAY_URL + Constants.DEFAULT_PROFILE_PICTURE,
       verified: false,
     };
     return true;
   } catch (e) {
-    console.log("here");
     return false;
   }
 };

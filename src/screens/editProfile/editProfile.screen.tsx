@@ -51,6 +51,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
     );
 
     if (!result.cancelled && result.type === "image") {
+      // TO DO: Send image to server, have server upload image to IPFS & store hash
       setImage(`data:image/jpg;base64,${result.base64 as string}`);
     }
   };
