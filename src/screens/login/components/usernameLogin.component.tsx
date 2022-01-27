@@ -87,7 +87,8 @@ export function UsernameLogin(): JSX.Element {
             globalStyles.fontFamilyPrimaryBold,
             globalStyles.fontColorPrimary,
           ]}
-        > Login
+        >
+          Login
         </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>

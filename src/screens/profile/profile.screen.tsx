@@ -23,7 +23,7 @@ export function ProfileScreen(props: Props): JSX.Element {
       id: 0,
       text: "NFTs",
     },
-/*     {
+    /*     {
       id: 1,
       text: "Posts",
     }, */

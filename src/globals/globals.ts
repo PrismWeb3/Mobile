@@ -13,10 +13,8 @@ export let globals: Globals = {
     name: "",
     followers: 0,
     following: 0,
-    description:
-      "",
-    image:
-      "",
+    description: "",
+    image: "",
     verified: false,
   },
 };

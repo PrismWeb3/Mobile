@@ -57,7 +57,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
 
   const save = () => {
     // save login
-    globals.loggedInUser = profile
+    globals.loggedInUser = profile;
     props.navigation.goBack();
   };
 

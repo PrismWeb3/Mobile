@@ -32,21 +32,20 @@ export function SignUpScreen(props: Props): JSX.Element {
         "Username too short!",
         "Prism username's must be at least 4 chars!",
       );
-    }
-    else if (!name) {
+    } else if (!name) {
       return Alert.alert(
         "Invalid name!",
         "You must provide an account reader-friendly name!",
       );
     }
-    const success = await signUp(username, name)
-      if (success) eventManager.authenticationSubject.next(true);
-      else {
-        Alert.alert(
-          "Unknown Error",
-          "An unknown error occured! Please try again.",
-        );
-      }
+    const success = await signUp(username, name);
+    if (success) eventManager.authenticationSubject.next(true);
+    else {
+      Alert.alert(
+        "Unknown Error",
+        "An unknown error occured! Please try again.",
+      );
+    }
   };
 
   return (

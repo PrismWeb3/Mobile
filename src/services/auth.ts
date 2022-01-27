@@ -146,23 +146,21 @@ export const signUp = async (username: string, name: string) => {
   };
 
   try {
-    await post(Constants.PRISM_BASE_URL, "newUser", request)
+    await post(Constants.PRISM_BASE_URL, "newUser", request);
     globals.loggedInUser = {
       username: username,
       name: name,
       followers: 0,
       following: 0,
-      description:
-        "",
+      description: "",
       image:
         "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
       verified: false,
-    }
-    return true
-  }
-  catch (e) {
-    console.log(e)
-    return false
+    };
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
   }
 
   // SecureStore.setItemAsync(Constants.SECURE_STORAGE_USER, {});

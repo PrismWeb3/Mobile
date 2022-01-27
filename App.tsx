@@ -6,7 +6,7 @@ import { Dimensions, StatusBar, StyleSheet, View } from "react-native";
 import { enableScreens } from "react-native-screens";
 import { LoginStack, stackConfig, TabNavigator } from "@navigation";
 import { NavigationElement } from "./src/types";
-import PolyfillCrypto from 'react-native-webview-crypto'
+import PolyfillCrypto from "react-native-webview-crypto";
 import {
   Lato_400Regular,
   Lato_400Regular_Italic,
