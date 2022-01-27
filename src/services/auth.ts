@@ -1,4 +1,4 @@
-// import * as SecureStore from "expo-secure-store";
+import * as SecureStore from "expo-secure-store";
 import { post } from "./helpers.ts";
 import { Constants } from "@globals";
 import { globals } from "@globals/globals";
@@ -35,28 +35,58 @@ export const signUp = async (username: string, name: string) => {
     });
   }
 
-  // CHANGE THESE BACK TO 4096 POST TESTING!!!!!!!
-  const userKeypair = await crypto.subtle.generateKey(
-    {
-      name: "RSASSA-PKCS1-v1_5",
-      modulusLength: 512,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256",
-    },
-    true,
-    ["sign", "verify"],
+  let existingDeviceKey = importExistingKeypair(
+    await SecureStore.getItemAsync(Constants.SECURE_STORAGE_DEVICE),
   );
-  const deviceKeypair = await crypto.subtle.generateKey(
-    {
-      name: "RSASSA-PKCS1-v1_5",
-      modulusLength: 512,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256",
-    },
-    true,
-    ["sign", "verify"],
+  let existingUserKey = importExistingKeypair(
+    await SecureStore.getItemAsync(Constants.SECURE_STORAGE_USER),
   );
 
+  function importExistingKeypair(encodedJson: string) {
+    if (!encodedJson) return null;
+    let obj = JSON.parse(atob(encodedJson));
+    for (let i = 0; i < 1; i++) {
+      let key = i === 0 ? "publicKey" : "privateKey";
+      obj[key].algorithm.publicExponent = new Uint8Array(
+        Object.values(obj[key].algorithm.publicExponent),
+      );
+    }
+    return obj;
+  }
+
+  // CHANGE THESE BACK TO 4096 POST TESTING!!!!!!!
+  const userKeypair = existingUserKey || await crypto.subtle.generateKey(
+    {
+      name: "RSASSA-PKCS1-v1_5",
+      modulusLength: 512,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256",
+    },
+    true,
+    ["sign", "verify"],
+  );
+  if (!existingUserKey) {
+    await SecureStore.setItemAsync(
+      Constants.SECURE_STORAGE_USER,
+      btoa(JSON.stringify(userKeypair)),
+    );
+  }
+  const deviceKeypair = existingDeviceKey || await crypto.subtle.generateKey(
+    {
+      name: "RSASSA-PKCS1-v1_5",
+      modulusLength: 512,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256",
+    },
+    true,
+    ["sign", "verify"],
+  );
+  if (!existingDeviceKey) {
+    await SecureStore.setItemAsync(
+      Constants.SECURE_STORAGE_DEVICE,
+      btoa(JSON.stringify(deviceKeypair)),
+    );
+  }
   // @ts-ignore
   function ab2str(buf) {
     // @ts-ignore
@@ -96,13 +126,6 @@ export const signUp = async (username: string, name: string) => {
       enc.encode(message),
     );
     let encstr = btoa(ab2str(sig));
-    let result = await window.crypto.subtle.verify(
-      "RSASSA-PKCS1-v1_5",
-      publicKey,
-      arrayBufferFromString(atob(encstr)),
-      enc.encode(message),
-    );
-    console.log("VERIFY?", result);
     return encstr;
   }
 
@@ -144,8 +167,8 @@ export const signUp = async (username: string, name: string) => {
     ),
     tx: unsignedTX,
   };
-
   try {
+    console.log(request);
     await post(Constants.PRISM_BASE_URL, "newUser", request);
     globals.loggedInUser = {
       username: username,
@@ -159,9 +182,7 @@ export const signUp = async (username: string, name: string) => {
     };
     return true;
   } catch (e) {
-    console.log(e);
+    console.log("here");
     return false;
   }
-
-  // SecureStore.setItemAsync(Constants.SECURE_STORAGE_USER, {});
 };

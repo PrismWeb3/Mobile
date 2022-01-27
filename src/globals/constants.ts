@@ -6,6 +6,10 @@ export class Constants {
 
   public static readonly SECURE_STORAGE_DESO_CONNECTION = "deso-connection";
 
+  public static readonly SECURE_STORAGE_USER = "prism-user-private-key";
+
+  public static readonly SECURE_STORAGE_DEVICE = "prism-user-private-key";
+
   public static readonly DESO_BASE_URL = "https://bitclout.com/api/v0/";
 
   public static readonly PRISM_BASE_URL = "http://0.0.0.0:7621/";
