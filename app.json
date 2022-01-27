@@ -1,10 +1,10 @@
 {
   "expo": {
-    "owner": "prismweb3",
-    "name": "prism",
+    "owner": "prism-web3-inc",
+    "name": "Prism-Mobile",
     "scheme": "prism",
-    "slug": "prism",
-    "version": "1.0.0",
+    "slug": "Prism-Mobile",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -23,7 +23,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "In order to take picture using the app, we need access to your camera.",
         "NSMicrophoneUsageDescription": "In order to make phone calls and record videos using the app, we need access to your microphone."
-      }
+      },
+      "bundleIdentifier": "com.prism-web3-inc.Prism-Mobile"
     },
     "android": {
       "adaptiveIcon": {

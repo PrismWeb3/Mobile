@@ -1,18 +1,24 @@
-import { DarkTheme, NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, View, StatusBar } from 'react-native';
-import { enableScreens } from 'react-native-screens';
-import { LoginStack, stackConfig, TabNavigator } from '@navigation';
-import { NavigationElement } from './src/types';
-import { Lato_400Regular, Lato_400Regular_Italic, Lato_700Bold, Lato_900Black } from '@expo-google-fonts/lato';
-import { useFonts } from 'expo-font';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { globalStyles } from '@styles';
-import { ChatScreen } from '@screens';
-import { ActionSheet } from './src/components/actionSheet.component';
-import { eventManager } from './src/services';
+import { DarkTheme, NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar as ExpoStatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
+import { Dimensions, StatusBar, StyleSheet, View } from "react-native";
+import { enableScreens } from "react-native-screens";
+import { LoginStack, stackConfig, TabNavigator } from "@navigation";
+import { NavigationElement } from "./src/types";
+import PolyfillCrypto from 'react-native-webview-crypto'
+import {
+  Lato_400Regular,
+  Lato_400Regular_Italic,
+  Lato_700Bold,
+  Lato_900Black,
+} from "@expo-google-fonts/lato";
+import { useFonts } from "expo-font";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { globalStyles } from "@styles";
+import { ChatScreen } from "@screens";
+import { ActionSheet } from "./src/components/actionSheet.component";
+import { eventManager } from "./src/services";
 
 enableScreens();
 const Stack = createStackNavigator();
@@ -22,24 +28,25 @@ export default function App() {
     Lato_400Regular,
     Lato_700Bold,
     Lato_400Regular_Italic,
-    Lato_900Black
+    Lato_900Black,
   });
 
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(
     () => {
-      const unsubscribeAuthenticationSubject = eventManager.authenticationSubject.subscribe(
-        (value) => {
-          setLoggedIn(value);
-        }
-      );
+      const unsubscribeAuthenticationSubject = eventManager
+        .authenticationSubject.subscribe(
+          (value) => {
+            setLoggedIn(value);
+          },
+        );
 
       return () => {
         unsubscribeAuthenticationSubject();
       };
     },
-    []
+    [],
   );
 
   const getStackNavigator = () => {
@@ -48,42 +55,54 @@ export default function App() {
     };
 
     if (loggedIn) {
-      return <>
-        <Stack.Screen
-          name={NavigationElement.MainTabNavigator}
-          component={TabNavigator}
-          options={screenOptions}
-        />
+      return (
+        <>
+          <Stack.Screen
+            name={NavigationElement.MainTabNavigator}
+            component={TabNavigator}
+            options={screenOptions}
+          />
 
-        <Stack.Screen
-          name={NavigationElement.ChatScreen}
-          component={ChatScreen}
-          options={screenOptions}
-        />
-      </>
-        ;
+          <Stack.Screen
+            name={NavigationElement.ChatScreen}
+            component={ChatScreen}
+            options={screenOptions}
+          />
+        </>
+      );
     } else {
-      return <Stack.Screen
-        options={screenOptions}
-        name={NavigationElement.LoginStack}
-        component={LoginStack} />;
+      return (
+        <Stack.Screen
+          options={screenOptions}
+          name={NavigationElement.LoginStack}
+          component={LoginStack}
+        />
+      );
     }
   };
 
   if (!fontsLoaded) {
-    return <View style={styles.container}>
-    </View>;
+    return (
+      <View style={styles.container}>
+      </View>
+    );
   }
-
   return (
     <SafeAreaView
-      edges={loggedIn ? [] : ['left', 'right']}
-      style={[styles.safeAreaView, styles.container, globalStyles.containerColorSecondary]}>
-      <ExpoStatusBar style='light' />
+      edges={loggedIn ? [] : ["left", "right"]}
+      style={[
+        styles.safeAreaView,
+        styles.container,
+        globalStyles.containerColorSecondary,
+      ]}
+    >
+      <PolyfillCrypto />
+      <ExpoStatusBar style="light" />
 
       <NavigationContainer theme={DarkTheme}>
         <Stack.Navigator
-          screenOptions={stackConfig}>
+          screenOptions={stackConfig}
+        >
           {getStackNavigator()}
         </Stack.Navigator>
 
@@ -96,11 +115,11 @@ export default function App() {
 const styles = StyleSheet.create(
   {
     safeAreaView: {
-      paddingTop: StatusBar.currentHeight
+      paddingTop: StatusBar.currentHeight,
     },
     container: {
       flex: 1,
-      height: Dimensions.get('window').height
-    }
-  }
+      height: Dimensions.get("window").height,
+    },
+  },
 );

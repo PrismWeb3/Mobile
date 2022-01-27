@@ -1,33 +1,38 @@
-import { Easing, Platform } from 'react-native';
-import { CardStyleInterpolators, StackNavigationOptions } from '@react-navigation/stack';
-import { TransitionSpec } from '@react-navigation/stack/lib/typescript/src/types';
+import { Easing, Platform } from "react-native";
+import {
+  CardStyleInterpolators,
+  StackNavigationOptions,
+} from "@react-navigation/stack";
+import { TransitionSpec } from "@react-navigation/stack/lib/typescript/src/types";
 
 const config: TransitionSpec = {
-    animation: 'spring',
-    config: {
-        stiffness: 1000,
-        damping: 500,
-        mass: 3,
-        overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 0.01,
-    },
+  animation: "spring",
+  config: {
+    stiffness: 1000,
+    damping: 500,
+    mass: 3,
+    overshootClamping: false,
+    restDisplacementThreshold: 0.01,
+    restSpeedThreshold: 0.01,
+  },
 };
 
 const closeConfig: TransitionSpec = {
-    animation: 'timing',
-    config: {
-        duration: 150,
-        easing: Easing.linear,
-    },
+  animation: "timing",
+  config: {
+    duration: 150,
+    easing: Easing.linear,
+  },
 };
 
-export const stackConfig: StackNavigationOptions = Platform.OS === 'ios' ? {} : {
-    gestureDirection: 'horizontal',
+export const stackConfig: StackNavigationOptions = Platform.OS === "ios"
+  ? {}
+  : {
+    gestureDirection: "horizontal",
     gestureEnabled: true,
     cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
     transitionSpec: {
-        open: config,
-        close: closeConfig,
+      open: config,
+      close: closeConfig,
     },
-};
+  };

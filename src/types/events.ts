@@ -1,15 +1,15 @@
 export interface ActionSheetOption {
-    icon?: JSX.Element;
-    text: string;
-    callback: () => void;
+  icon?: JSX.Element;
+  text: string;
+  callback: () => void;
 }
 
 export interface ActionSheetEvent {
-    options: ActionSheetOption[];
+  options: ActionSheetOption[];
 }
 
 export interface ChatMediaModalEvent {
-    uri: string;
-    showActionBar: boolean;
-    showSaveButton: boolean;
+  uri: string;
+  showActionBar: boolean;
+  showSaveButton: boolean;
 }

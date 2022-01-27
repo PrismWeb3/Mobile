@@ -15,15 +15,15 @@
  * - Use pure javascript libraries to support react-native expo
  */
 
-import * as Random from 'expo-random';
-const EC = require('elliptic').ec;
-const ec = new EC('secp256k1');
-const jsSHA = require('jssha');
-const aesjs = require('aes-js');
+import * as Random from "expo-random";
+const EC = require("elliptic").ec;
+const ec = new EC("secp256k1");
+const jsSHA = require("jssha");
+const aesjs = require("aes-js");
 
 function assert(condition, message) {
   if (!condition) {
-    throw new Error(message || 'Assertion failed');
+    throw new Error(message || "Assertion failed");
   }
 }
 
@@ -31,13 +31,13 @@ function assert(condition, message) {
 const kdf = function (secret, outputLength) {
   let ctr = 1;
   let written = 0;
-  let result = Buffer.from('');
+  let result = Buffer.from("");
   while (written < outputLength) {
     const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr]);
 
-    const shaObj = new jsSHA('SHA-256', 'UINT8ARRAY', { encoding: 'UTF8' });
+    const shaObj = new jsSHA("SHA-256", "UINT8ARRAY", { encoding: "UTF8" });
     shaObj.update(Buffer.concat([ctrs, secret]));
-    const hashResult = new Buffer(shaObj.getHash('UINT8ARRAY'));
+    const hashResult = new Buffer(shaObj.getHash("UINT8ARRAY"));
 
     result = Buffer.concat([result, hashResult]);
     written += 32;
@@ -48,7 +48,7 @@ const kdf = function (secret, outputLength) {
 
 const convertUtf8 = (function () {
   function utf8ByteToUnicodeStr(utf8Bytes) {
-    var unicodeStr = '';
+    var unicodeStr = "";
     for (var pos = 0; pos < utf8Bytes.length;) {
       var flag = utf8Bytes[pos];
       var unicode = 0;
@@ -127,7 +127,12 @@ const convertUtf8 = (function () {
 
 // AES-128-CTR is used in the Parity implementation
 // Get the AES-128-CTR browser implementation
-export const aesCtrEncrypt = function (counter, key, data, convertToString = true) {
+export const aesCtrEncrypt = function (
+  counter,
+  key,
+  data,
+  convertToString = true,
+) {
   var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(counter));
   var encryptedBytes = aesCtr.encrypt(data);
 
@@ -147,24 +152,24 @@ export const aesCtrDecrypt = function (counter, key, data) {
 };
 
 function hmacSha256Sign(key, msg) {
-  const shaObj = new jsSHA('SHA-256', 'UINT8ARRAY', {
-    hmacKey: { value: key, format: 'UINT8ARRAY' },
+  const shaObj = new jsSHA("SHA-256", "UINT8ARRAY", {
+    hmacKey: { value: key, format: "UINT8ARRAY" },
   });
   shaObj.update(msg);
-  const hmac = shaObj.getHash('UINT8ARRAY');
+  const hmac = shaObj.getHash("UINT8ARRAY");
   return new Buffer(hmac);
 }
 
 //ECDH
 const derive = function (privateKeyA, publicKeyB) {
-  assert(Buffer.isBuffer(privateKeyA), 'Bad input');
-  assert(Buffer.isBuffer(publicKeyB), 'Bad input');
-  assert(privateKeyA.length === 32, 'Bad private key');
-  assert(publicKeyB.length === 65, 'Bad public key');
-  assert(publicKeyB[0] === 4, 'Bad public key');
+  assert(Buffer.isBuffer(privateKeyA), "Bad input");
+  assert(Buffer.isBuffer(publicKeyB), "Bad input");
+  assert(privateKeyA.length === 32, "Bad private key");
+  assert(publicKeyB.length === 65, "Bad public key");
+  assert(publicKeyB[0] === 4, "Bad public key");
   const keyA = ec.keyFromPrivate(privateKeyA);
   const keyB = ec.keyFromPublic(publicKeyB);
-  const Px = keyA.derive(keyB.getPublic());  // BN instance
+  const Px = keyA.derive(keyB.getPublic()); // BN instance
   return new Buffer(Px.toArray());
 };
 
@@ -172,7 +177,8 @@ const derive = function (privateKeyA, publicKeyB) {
 // Serialization: <ephemPubKey><IV><CipherText><HMAC>
 export const encrypt = function (publicKeyTo, msg, opts) {
   opts = opts || {};
-  const ephemPrivateKey = opts.ephemPrivateKey || new Buffer(Random.getRandomBytes(32));
+  const ephemPrivateKey = opts.ephemPrivateKey ||
+    new Buffer(Random.getRandomBytes(32));
   const ephemPublicKey = getPublic(ephemPrivateKey);
 
   const sharedPx = derive(ephemPrivateKey, publicKeyTo);
@@ -181,9 +187,9 @@ export const encrypt = function (publicKeyTo, msg, opts) {
   const encryptionKey = hash.slice(0, 16);
 
   // Generate hmac
-  const shaObj = new jsSHA('SHA-256', 'UINT8ARRAY', { encoding: 'UTF8' });
+  const shaObj = new jsSHA("SHA-256", "UINT8ARRAY", { encoding: "UTF8" });
   shaObj.update(hash.slice(16));
-  const macKey = new Buffer(shaObj.getHash('UINT8ARRAY'));
+  const macKey = new Buffer(shaObj.getHash("UINT8ARRAY"));
   const msgBuffer = new Buffer(msg);
   const ciphertext = aesCtrEncrypt(iv, encryptionKey, msgBuffer, false);
   const dataToMac = Buffer.from([...iv, ...ciphertext]);
@@ -195,8 +201,11 @@ export const encrypt = function (publicKeyTo, msg, opts) {
 // Decrypt serialised AES-128-CTR
 export const decrypt = function (privateKey, encrypted) {
   const metaLength = 1 + 64 + 16 + 32;
-  assert(encrypted.length > metaLength, 'Invalid Ciphertext. Data is too small');
-  assert(encrypted[0] >= 2 && encrypted[0] <= 4, 'Not valid ciphertext.');
+  assert(
+    encrypted.length > metaLength,
+    "Invalid Ciphertext. Data is too small",
+  );
+  assert(encrypted[0] >= 2 && encrypted[0] <= 4, "Not valid ciphertext.");
 
   // deserialize
   const ephemPublicKey = encrypted.slice(0, 65);
@@ -211,23 +220,28 @@ export const decrypt = function (privateKey, encrypted) {
   const hash = kdf(px, 32);
   const encryptionKey = hash.slice(0, 16);
 
-  const shaObj = new jsSHA('SHA-256', 'UINT8ARRAY', { encoding: 'UTF8' });
+  const shaObj = new jsSHA("SHA-256", "UINT8ARRAY", { encoding: "UTF8" });
   shaObj.update(hash.slice(16));
-  const macKey = new Buffer(shaObj.getHash('UINT8ARRAY'));
+  const macKey = new Buffer(shaObj.getHash("UINT8ARRAY"));
 
   const dataToMac = Buffer.from(cipherAndIv);
   const hmacGood = hmacSha256Sign(macKey, dataToMac);
-  assert(hmacGood.equals(msgMac), 'Incorrect MAC');
+  assert(hmacGood.equals(msgMac), "Incorrect MAC");
   const decrypted = aesCtrDecrypt(iv, encryptionKey, ciphertext);
   return decrypted;
 };
 
 export const getPublic = function (privateKey) {
-  assert(privateKey.length === 32, 'Bad private key');
-  return new Buffer(ec.keyFromPrivate(privateKey).getPublic('arr'));
+  assert(privateKey.length === 32, "Bad private key");
+  return new Buffer(ec.keyFromPrivate(privateKey).getPublic("arr"));
 };
 
-export const encryptShared = function (privateKeySender, publicKeyRecipient, msg, opts) {
+export const encryptShared = function (
+  privateKeySender,
+  publicKeyRecipient,
+  msg,
+  opts,
+) {
   opts = opts || {};
   const sharedPx = derive(privateKeySender, publicKeyRecipient);
   const sharedPrivateKey = kdf(sharedPx, 32);
@@ -236,7 +250,12 @@ export const encryptShared = function (privateKeySender, publicKeyRecipient, msg
   return encrypt(sharedPublicKey, msg, opts);
 };
 
-export const decryptShared = function (privateKeyRecipient, publicKeySender, encrypted, opts) {
+export const decryptShared = function (
+  privateKeyRecipient,
+  publicKeySender,
+  encrypted,
+  opts,
+) {
   opts = opts || {};
   const sharedPx = derive(privateKeyRecipient, publicKeySender);
   const sharedPrivateKey = kdf(sharedPx, 32);
