@@ -21,12 +21,12 @@ export function ProfileScreen(props: Props): JSX.Element {
   const tabs: Tab[] = [
     {
       id: 0,
-      text: "Posts",
-    },
-    {
-      id: 1,
       text: "NFTs",
     },
+/*     {
+      id: 1,
+      text: "Posts",
+    }, */
   ];
 
   return (

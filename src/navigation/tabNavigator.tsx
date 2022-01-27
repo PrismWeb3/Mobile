@@ -87,7 +87,7 @@ export function TabNavigator() {
       tabBar={(props) => <TabBar props={props} />}
     >
       <Tab.Screen name={NavigationElement.ChatStack} component={ChatStack} />
-      <Tab.Screen name={NavigationElement.FeedStack} component={FeedStack} />
+      {/* <Tab.Screen name={NavigationElement.FeedStack} component={FeedStack} /> */}
       <Tab.Screen
         name={NavigationElement.ProfileStack}
         component={ProfileStack}

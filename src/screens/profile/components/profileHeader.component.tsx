@@ -17,11 +17,11 @@ export function ProfileHeader(props: Props): JSX.Element {
       <TouchableOpacity
         activeOpacity={0.7}
       >
-        <Ionicons
+{/*         <Ionicons
           name="notifications"
           size={24}
           color={globalStyles.fontColorPrimary.color}
-        />
+        /> */}
       </TouchableOpacity>
 
       <Text style={[styles.username, globalStyles.fontColorPrimary]}>

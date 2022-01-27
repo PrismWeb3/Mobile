@@ -27,6 +27,18 @@ export function SignUpScreen(props: Props): JSX.Element {
   const [name, setName] = useState<string>("");
 
   const handleSignUp = async () => {
+    if (username.length < 4) {
+      return Alert.alert(
+        "Username too short!",
+        "Prism username's must be at least 4 chars!",
+      );
+    }
+    else if (!name) {
+      return Alert.alert(
+        "Invalid name!",
+        "You must provide an account reader-friendly name!",
+      );
+    }
     const success = await signUp(username, name)
       if (success) eventManager.authenticationSubject.next(true);
       else {
