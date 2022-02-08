@@ -43,7 +43,8 @@ export function StartScreen(): JSX.Element {
             globalStyles.fontColorPrimary,
             globalStyles.fontFamilyPrimary,
           ]}
-        >Are you new to Prism?
+        >
+          Are you new to Prism?
           <Text
             style={[
               globalStyles.fontColorAccent,

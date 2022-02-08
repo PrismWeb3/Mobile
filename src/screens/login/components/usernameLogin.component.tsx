@@ -21,7 +21,6 @@ export function UsernameLogin(): JSX.Element {
   const [username, setUsername] = useState<string>("");
 
   const handleLogIn = async () => {
-    console.log(Constants.PRISM_BASE_URL);
     await post(
       Constants.PRISM_BASE_URL,
       "getUser",

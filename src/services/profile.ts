@@ -1,10 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { post } from "./helpers.ts";
-import {
-  hash,
-  importExistingKeypair,
-  signRSA,
-} from "./crypto.ts";
+import { hash, importExistingKeypair, signRSA } from "./crypto.ts";
 import { Constants } from "@globals";
 import { globals } from "@globals/globals";
 import { encode as btoa } from "base-64";
@@ -78,7 +74,6 @@ export const editProfile = async (
       image: resp.avatarHash, // WHEN IPFS: Constants.IPFS_GATEWAY_URL + resp.avatarHash,
       verified: resp.verifed,
     };
-    console.log(globals.loggedInUser);
     return true;
   } catch (e) {
     console.log("ERROR EDITING PROFILE", e);
