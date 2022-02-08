@@ -3,6 +3,7 @@ import { post } from "./helpers.ts";
 import {
   hash,
   importExistingKeypair,
+  signRSA,
 } from "./crypto.ts";
 import { Constants } from "@globals";
 import { globals } from "@globals/globals";
