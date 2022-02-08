@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Image,
   Platform,
   StyleSheet,
@@ -16,6 +17,8 @@ import { globals } from "@globals/globals";
 import { Profile } from "@types";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
+import { eventManager } from "@services/eventManager";
+import { editProfile } from "@services";
 
 interface Props {
   navigation: StackNavigationProp<ParamListBase>;
@@ -27,7 +30,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
   const [image, setImage] = useState(profile.image);
   const [username, setUsername] = useState(profile.username);
   const [name, setName] = useState(profile.name);
-  const [description, setDescription] = useState(profile.description);
+  const [bio, setBio] = useState(profile.bio);
 
   const editImage = async () => {
     if (Platform.OS !== "web") {
@@ -52,14 +55,23 @@ export function EditProfileScreen(props: Props): JSX.Element {
 
     if (!result.cancelled && result.type === "image") {
       // TO DO: Send image to server, have server upload image to IPFS & store hash
+      // For now, we'll just send back the img
       setImage(`data:image/jpg;base64,${result.base64 as string}`);
     }
   };
 
-  const save = () => {
-    // save login
-    globals.loggedInUser = profile;
-    props.navigation.goBack();
+  const handleEditProfile = async () => {
+    const newUser = await editProfile(name, username, bio, image);
+    if (!newUser) {
+      Alert.alert(
+        "Unknown Error",
+        "An unknown error occured! Please try again.",
+      );
+    } else {
+      eventManager.authenticationSubject.next(true);
+      eventManager.profileUpdated.next();
+      props.navigation.goBack();
+    }
   };
 
   return (
@@ -68,7 +80,10 @@ export function EditProfileScreen(props: Props): JSX.Element {
       bounces={false}
       keyboardShouldPersistTaps={"handled"}
     >
-      <EditProfileHeader navigation={props.navigation} save={save} />
+      <EditProfileHeader
+        navigation={props.navigation}
+        save={handleEditProfile}
+      />
 
       <Image style={styles.image} source={{ uri: image }} />
       <TouchableOpacity
@@ -106,12 +121,12 @@ export function EditProfileScreen(props: Props): JSX.Element {
 
       <View style={styles.textInputContainer}>
         <Text style={[styles.label, globalStyles.fontColorSecondary]}>
-          Description
+          Bio
         </Text>
         <TextInput
           style={[styles.textInput, globalStyles.fontColorPrimary]}
-          value={description}
-          onChangeText={setDescription}
+          value={bio}
+          onChangeText={setBio}
           multiline={true}
           keyboardAppearance={"dark"}
         />

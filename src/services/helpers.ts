@@ -36,7 +36,11 @@ export function formatDate(date: Date) {
   });
 }
 
-export async function post(host: string, route: string, body: object) {
+export async function post(
+  host: string,
+  route: string,
+  body: Record<string, unknown>,
+) {
   const p_response = await fetch(
     host + route,
     {
@@ -48,10 +52,14 @@ export async function post(host: string, route: string, body: object) {
   return await handleResponse(p_response);
 }
 
-export function handleResponse(response: Response): Promise<any> {
+export function handleResponse(response: Response): Promise<unknown> {
   if (response.ok) {
-    return response.json().catch(() => {}) as Promise<object>;
+    return response.json().catch(() => {}) as Promise<Record<string, unknown>>;
   } else {
     throw response;
   }
+}
+
+export function copyObject<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj)) as T;
 }

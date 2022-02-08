@@ -28,10 +28,45 @@ export interface Profile {
   username: string;
   name: string;
   image: string;
-  description: string;
+  bio: string;
   followers: number;
   following: number;
   verified: boolean;
+}
+
+export interface DatabaseUser {
+  _id: string;
+  username: string;
+  userPublicKey: string;
+  bio: string;
+  name: string;
+  avatarHash: string;
+  connections: {
+    eth: {
+      address: string;
+      proofHash: string;
+    } | null;
+    deso: {
+      address: string;
+      proofHash: string;
+    } | null;
+  } | null;
+  clients: [
+    {
+      _id: string;
+      name: string;
+      clientPublicKey: string;
+      paperKey: boolean;
+      createdAt: number;
+    },
+  ];
+  createdAt: number;
+  tempKeys: [{
+    publicKey: string;
+    expiresAt: number;
+    signedBy: string;
+  }] | [];
+  chain: [];
 }
 
 export interface DerivedAuthentication {

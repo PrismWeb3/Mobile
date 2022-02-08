@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-let-requires */
 /**
  * Browser ecies-parity implementation.
  *
@@ -10,7 +10,7 @@
  *
  * Imported from https://github.com/sigp/ecies-parity with some changes:
  * - Remove PARITY_DEFAULT_HMAC
- * - Use const instead of var/let
+ * - Use const instead of let/let
  * - Use node: crypto instead of subtle
  * - Use pure javascript libraries to support react-native expo
  */
@@ -48,10 +48,10 @@ const kdf = function (secret, outputLength) {
 
 const convertUtf8 = (function () {
   function utf8ByteToUnicodeStr(utf8Bytes) {
-    var unicodeStr = "";
-    for (var pos = 0; pos < utf8Bytes.length;) {
-      var flag = utf8Bytes[pos];
-      var unicode = 0;
+    let unicodeStr = "";
+    for (let pos = 0; pos < utf8Bytes.length;) {
+      const flag = utf8Bytes[pos];
+      let unicode = 0;
       if (flag >>> 7 === 0) {
         unicodeStr += String.fromCharCode(utf8Bytes[pos]);
         pos += 1;
@@ -100,11 +100,11 @@ const convertUtf8 = (function () {
   }
 
   function toBytes(text) {
-    var result = [],
+    const result = [],
       i = 0;
     text = encodeURI(text);
     while (i < text.length) {
-      var c = text.charCodeAt(i++);
+      const c = text.charCodeAt(i++);
 
       // if it is a % sign, encode the following 2 bytes as a hex value
       if (c === 37) {
@@ -133,21 +133,21 @@ export const aesCtrEncrypt = function (
   data,
   convertToString = true,
 ) {
-  var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(counter));
-  var encryptedBytes = aesCtr.encrypt(data);
+  const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(counter));
+  const encryptedBytes = aesCtr.encrypt(data);
 
   if (!convertToString) {
     return encryptedBytes;
   }
 
-  var encryptedText = aesjs.utils.hex.fromBytes(encryptedBytes);
+  const encryptedText = aesjs.utils.hex.fromBytes(encryptedBytes);
   return encryptedText;
 };
 
 export const aesCtrDecrypt = function (counter, key, data) {
-  var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(counter));
-  var decryptedBytes = aesCtr.decrypt(data);
-  var decryptedText = convertUtf8.fromBytes(decryptedBytes);
+  const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(counter));
+  const decryptedBytes = aesCtr.decrypt(data);
+  const decryptedText = convertUtf8.fromBytes(decryptedBytes);
   return decryptedText;
 };
 

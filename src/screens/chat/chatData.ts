@@ -2,23 +2,18 @@ import { Message } from "@types";
 
 export const chatMessages: Message[] = [
   {
-    text: "Hey man! Welcome to Prism. Here's a test message :)",
-    time: new Date("December 25 2:32 pm"),
+    text: "Hey Paul, Welcome to Prism!",
+    time: new Date("Feb 02 20:53 22"),
     isSender: true,
   },
   {
-    text: "Awesome! Thanks for the invite.",
-    time: new Date("December 25 2:35 pm"),
+    text: "This is awesome! Thanks for the invite. 🚀🚀",
+    time: new Date("Feb 02 20:58 22"),
     isSender: false,
     reply: {
-      text: "Hey man! Welcome to Prism. Here's a test message :)",
-      time: new Date("December 26 8:57 am"),
+      text: "Hey Paul, Welcome to Prism!",
+      time: new Date("Feb 02 20:53 22"),
       isSender: true,
     },
-  },
-  {
-    text: "🚀🚀",
-    time: new Date("December 25 2:35 pm"),
-    isSender: false,
   },
 ];

@@ -150,7 +150,6 @@ export function ChatMessages(props: Props): JSX.Element {
       const formattedMessageDate = isToday(messageTime)
         ? "Today"
         : formatDate(messageTime);
-
       if (!dayMessagesMap[formattedMessageDate]) {
         dayMessagesMap[formattedMessageDate] = [];
       }

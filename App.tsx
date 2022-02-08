@@ -19,6 +19,7 @@ import { globalStyles } from "@styles";
 import { ChatScreen } from "@screens";
 import { ActionSheet } from "./src/components/actionSheet.component";
 import { eventManager } from "./src/services";
+import * as SplashScreen from "expo-splash-screen";
 
 enableScreens();
 const Stack = createStackNavigator();
@@ -32,9 +33,12 @@ export default function App() {
   });
 
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(true);
 
   useEffect(
     () => {
+      prepare();
+
       const unsubscribeAuthenticationSubject = eventManager
         .authenticationSubject.subscribe(
           (value) => {
@@ -48,6 +52,27 @@ export default function App() {
     },
     [],
   );
+
+  useEffect(
+    () => {
+      if (!isLoading && fontsLoaded) {
+        SplashScreen.hideAsync();
+      }
+    },
+    [isLoading, fontsLoaded],
+  );
+
+  const prepare = async () => {
+    try {
+      await SplashScreen.preventAutoHideAsync();
+
+      // check authentication
+      // load data
+
+      setLoading(false);
+    } catch {
+    }
+  };
 
   const getStackNavigator = () => {
     const screenOptions = {
@@ -87,6 +112,7 @@ export default function App() {
       </View>
     );
   }
+
   return (
     <SafeAreaView
       edges={loggedIn ? [] : ["left", "right"]}

@@ -33,8 +33,8 @@ export function ProfileCard(props: Props): JSX.Element {
               )}
           </View>
 
-          <Text style={[styles.description, globalStyles.fontColorPrimary]}>
-            {props.profile.description}
+          <Text style={[styles.bio, globalStyles.fontColorPrimary]}>
+            {props.profile.bio}
           </Text>
         </View>
       </View>
@@ -84,7 +84,7 @@ const styles = StyleSheet.create(
       fontSize: 22,
       marginRight: 6,
     },
-    description: {
+    bio: {
       marginTop: 4,
       lineHeight: 18,
     },

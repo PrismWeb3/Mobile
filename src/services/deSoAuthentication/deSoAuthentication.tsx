@@ -19,50 +19,47 @@ export const authenticateWithDeSoIdentity = async (): Promise<boolean> => {
   );
 
   if (response.type === "success") {
-    try {
-      const derivedAuthentication: DerivedAuthentication = response
-        .params as unknown as DerivedAuthentication;
-      derivedAuthentication.expirationBlock = Number(
-        derivedAuthentication.expirationBlock,
-      );
-      derivedAuthentication.compressedDerivedPublicKey = crypto
-        .compressPublicKey(derivedAuthentication.derivedPublicKey);
+    const derivedAuthentication: DerivedAuthentication = response
+      .params as unknown as DerivedAuthentication;
+    derivedAuthentication.expirationBlock = Number(
+      derivedAuthentication.expirationBlock,
+    );
+    derivedAuthentication.compressedDerivedPublicKey = crypto
+      .compressPublicKey(derivedAuthentication.derivedPublicKey);
 
-      const authorizationResponse = await deSoApi.authorizeDerivedKey(
-        derivedAuthentication.publicKey,
-        derivedAuthentication.derivedPublicKey,
-        derivedAuthentication.accessSignature,
-        derivedAuthentication.expirationBlock,
-        false,
-      );
+    const authorizationResponse = await deSoApi.authorizeDerivedKey(
+      derivedAuthentication.publicKey,
+      derivedAuthentication.derivedPublicKey,
+      derivedAuthentication.accessSignature,
+      derivedAuthentication.expirationBlock,
+      false,
+    );
 
-      const appendExtraDataResponse = await deSoApi
-        .appendExtraDataToTransaction(
-          authorizationResponse.TransactionHex as string,
-          derivedAuthentication.compressedDerivedPublicKey,
-        );
-
-      const signedTransaction = signing.signTransaction(
-        appendExtraDataResponse.TransactionHex as string,
-        derivedAuthentication.derivedSeedHex,
+    const appendExtraDataResponse = await deSoApi
+      .appendExtraDataToTransaction(
+        authorizationResponse.TransactionHex as string,
+        derivedAuthentication.compressedDerivedPublicKey,
       );
 
-      await deSoApi.submitTransaction(signedTransaction);
-      await wait(3000);
-      const derivedKeys = await deSoApi.getUsersDerivedKeys(
-        derivedAuthentication.publicKey,
-      );
+    const signedTransaction = signing.signTransaction(
+      appendExtraDataResponse.TransactionHex as string,
+      derivedAuthentication.derivedSeedHex,
+    );
 
-      if (
-        derivedKeys.DerivedKeys[derivedAuthentication.derivedPublicKey]?.IsValid
-      ) {
-        SecureStore.setItemAsync(
-          Constants.SECURE_STORAGE_DESO_CONNECTION,
-          JSON.stringify(derivedAuthentication),
-        );
-        return true;
-      }
-    } catch {
+    await deSoApi.submitTransaction(signedTransaction);
+    await wait(3000);
+    const derivedKeys = await deSoApi.getUsersDerivedKeys(
+      derivedAuthentication.publicKey,
+    );
+
+    if (
+      derivedKeys.DerivedKeys[derivedAuthentication.derivedPublicKey]?.IsValid
+    ) {
+      SecureStore.setItemAsync(
+        Constants.SECURE_STORAGE_DESO_CONNECTION,
+        JSON.stringify(derivedAuthentication),
+      );
+      return true;
     }
   }
 

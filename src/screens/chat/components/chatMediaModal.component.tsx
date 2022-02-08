@@ -108,21 +108,18 @@ export function ChatMediaModal(): JSX.Element {
   };
 
   const saveMedia = async (): Promise<void> => {
-    try {
-      let permission = await MediaLibrary.getPermissionsAsync();
+    let permission = await MediaLibrary.getPermissionsAsync();
+    if (!permission.granted) {
+      permission = await MediaLibrary.requestPermissionsAsync();
+
       if (!permission.granted) {
-        permission = await MediaLibrary.requestPermissionsAsync();
-
-        if (!permission.granted) {
-          return;
-        }
+        return;
       }
-
-      await MediaLibrary.saveToLibraryAsync(uri);
-
-      Alert.alert("Success", "Image saved to your library");
-    } catch {
     }
+
+    await MediaLibrary.saveToLibraryAsync(uri);
+
+    Alert.alert("Success", "Image saved to your library");
   };
 
   if (!visible) {

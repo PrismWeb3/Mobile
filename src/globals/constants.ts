@@ -1,6 +1,3 @@
-import _Constants from "expo-constants";
-
-const { manifest } = _Constants;
 export class Constants {
   public static readonly USERNAME_MAX_LENGTH = 20;
 
@@ -8,7 +5,7 @@ export class Constants {
 
   public static readonly SECURE_STORAGE_USER = "prism-user-private-key";
 
-  public static readonly SECURE_STORAGE_DEVICE = "prism-user-private-key";
+  public static readonly SECURE_STORAGE_DEVICE = "prism-device-private-key";
 
   public static readonly DESO_BASE_URL = "https://bitclout.com/api/v0/";
 
