@@ -23,7 +23,7 @@ interface Props {
 export function AccountsScreen(props: Props): JSX.Element {
   const [deSoConnected, setDeSoConnected] = useState(false);
   const [deSoLoading, setDeSoLoading] = useState(false);
-  const [ethConnected, setEthConnected] = useState(true);
+  const [ethConnected, setEthConnected] = useState(false);
 
   const isMounted = useRef(false);
 
@@ -99,6 +99,18 @@ export function AccountsScreen(props: Props): JSX.Element {
         navigation={props.navigation}
       />
 
+      <TouchableOpacity style={styles.accountContainer}>
+        <Image
+          style={styles.ethLogo}
+          source={require("../../../assets/ethereum.png")}
+        />
+        <Text style={[styles.logoText, globalStyles.fontColorPrimary]}>
+          Ethereum
+        </Text>
+
+        {ethConnected && renderConnected()}
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.accountContainer}
         onPress={connectDeSo}
@@ -118,18 +130,6 @@ export function AccountsScreen(props: Props): JSX.Element {
             color={globalStyles.fontColorSecondary.color}
           />
         )}
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.accountContainer}>
-        <Image
-          style={styles.ethLogo}
-          source={require("../../../assets/ethereum.png")}
-        />
-        <Text style={[styles.logoText, globalStyles.fontColorPrimary]}>
-          Ethereum
-        </Text>
-
-        {ethConnected && renderConnected()}
       </TouchableOpacity>
     </View>
   );

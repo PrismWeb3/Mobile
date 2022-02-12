@@ -4,8 +4,6 @@ interface Globals {
   loggedInUser: Profile | undefined;
 }
 
-export const Webview = null;
-
 // globals is altered, just not in this file. It cannot be a const.
 // deno-lint-ignore prefer-const
 export let globals: Globals = {
@@ -17,8 +15,7 @@ export let globals: Globals = {
     followers: 0,
     following: 0,
     bio: "",
-    image: Constants.IPFS_GATEWAY_URL + Constants.DEFAULT_PROFILE_PICTURE,
+    image: Constants.IPFS_GATEWAY_URL + Constants.DEFAULT_IPFS_HASH,
     verified: false,
   },
 };
-// This should get stored in local storage & pulled in on app load

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Alert,
+  AsyncStorage,
   Image,
   Platform,
   StyleSheet,
@@ -13,20 +14,19 @@ import { globalStyles } from "@styles";
 import { ParamListBase } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { EditProfileHeader } from "./components/editProfileHeader.component";
-import { globals } from "@globals/globals";
+
 import { Profile } from "@types";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
 import { eventManager } from "@services/eventManager";
 import { editProfile } from "@services";
-
+import { globals } from "@globals/globals";
 interface Props {
   navigation: StackNavigationProp<ParamListBase>;
 }
 
 export function EditProfileScreen(props: Props): JSX.Element {
   const profile = globals.loggedInUser as Profile;
-
   const [image, setImage] = useState(profile.image);
   const [username, setUsername] = useState(profile.username);
   const [name, setName] = useState(profile.name);
