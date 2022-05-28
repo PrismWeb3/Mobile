@@ -17,9 +17,11 @@ interface Props {
 
 export function ProfileScreen(props: Props): JSX.Element {
   const [selectedTab, setSelectedTab] = useState(0);
+  const loggedInUser = globals.loggedInUser as Profile;
   const [profile, setProfile] = useState<Profile>(
-    globals.loggedInUser as Profile,
+    loggedInUser,
   );
+
 
   const tabs: Tab[] = [
     {
@@ -28,7 +30,7 @@ export function ProfileScreen(props: Props): JSX.Element {
     },
     /*{
       id: 1,
-      text: "NFTs",
+      text: "Posts",
     },*/
   ];
 
@@ -37,7 +39,7 @@ export function ProfileScreen(props: Props): JSX.Element {
       const profileUpdatedSubscription = eventManager.profileUpdated.subscribe(
         () => {
           const profileCopy = copyObject<Profile>(
-            globals.loggedInUser as Profile,
+            globals.loggedInUser,
           );
           setProfile(profileCopy);
         },

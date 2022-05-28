@@ -1,5 +1,5 @@
 export interface Contact {
-  image: string;
+  imageURL: string;
   username: string;
   lastMessage: string;
   lastMessageTime: Date;
@@ -27,7 +27,7 @@ export interface Message {
 export interface Profile {
   username: string;
   name: string;
-  image: string;
+  imageURL: string;
   bio: string;
   followers: number;
   following: number;

@@ -2,7 +2,13 @@ import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { Dimensions, StatusBar, StyleSheet, View } from "react-native";
+import {
+  AsyncStorage,
+  Dimensions,
+  StatusBar,
+  StyleSheet,
+  View,
+} from "react-native";
 import { enableScreens } from "react-native-screens";
 import { LoginStack, stackConfig, TabNavigator } from "@navigation";
 import { NavigationElement } from "./src/types";
@@ -20,6 +26,7 @@ import { ChatScreen } from "@screens";
 import { ActionSheet } from "./src/components/actionSheet.component";
 import { eventManager } from "./src/services";
 import * as SplashScreen from "expo-splash-screen";
+import { globals } from "@globals/globals";
 
 enableScreens();
 const Stack = createStackNavigator();
@@ -65,10 +72,16 @@ export default function App() {
   const prepare = async () => {
     try {
       await SplashScreen.preventAutoHideAsync();
-
-      // check authentication
-      // load data
-
+      // Uncomment if you need to reset storage; Eventually will build a logout button 
+      // await AsyncStorage.removeItem("loggedInUser");
+      const store = await AsyncStorage.getItem("loggedInUser");
+      if (store) {
+        globals.loggedInUser = JSON.parse(
+          await AsyncStorage.getItem("loggedInUser"),
+        );
+        eventManager.authenticationSubject.next(true);
+        setLoggedIn(true);
+      }
       setLoading(false);
     } catch {
     }

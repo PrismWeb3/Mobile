@@ -44,14 +44,15 @@ export function StartScreen(): JSX.Element {
             globalStyles.fontFamilyPrimary,
           ]}
         >
-          Are you new to Prism?
+          Are you new to Prism?{" "}
           <Text
             style={[
               globalStyles.fontColorAccent,
               globalStyles.fontFamilyPrimaryBold,
             ]}
             onPress={() => navigation.push(NavigationElement.SignUpScreen)}
-          > Sign up
+          >
+            Sign up
           </Text>
         </Text>
       </View>

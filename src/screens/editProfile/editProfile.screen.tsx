@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Alert,
+  AsyncStorage,
   Image,
   Platform,
   StyleSheet,
@@ -13,12 +14,14 @@ import { globalStyles } from "@styles";
 import { ParamListBase } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { EditProfileHeader } from "./components/editProfileHeader.component";
-import { globals } from "@globals/globals";
+
 import { Profile } from "@types";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
 import { eventManager } from "@services/eventManager";
-import { editProfile } from "@services";
+import { editProfile, uploadImage } from "@services";
+import { globals } from "@globals/globals";
+import { Constants } from "@globals/constants"
 
 interface Props {
   navigation: StackNavigationProp<ParamListBase>;
@@ -26,8 +29,8 @@ interface Props {
 
 export function EditProfileScreen(props: Props): JSX.Element {
   const profile = globals.loggedInUser as Profile;
-
-  const [image, setImage] = useState(profile.image);
+  const [imageURL, setImageURL] = useState(profile.imageURL);
+  const [avatarHash, setAvatarHash] = useState(profile.avatarHash);
   const [username, setUsername] = useState(profile.username);
   const [name, setName] = useState(profile.name);
   const [bio, setBio] = useState(profile.bio);
@@ -54,14 +57,15 @@ export function EditProfileScreen(props: Props): JSX.Element {
     );
 
     if (!result.cancelled && result.type === "image") {
-      // TO DO: Send image to server, have server upload image to IPFS & store hash
-      // For now, we'll just send back the img
-      setImage(`data:image/jpg;base64,${result.base64 as string}`);
+      const blob = await (await fetch(result.uri)).blob()
+      const avatarHash = await uploadImage(blob)
+      setAvatarHash(avatarHash)
+     // setImageURL(Constants.IPFS_GATEWAY_URL + avatarHash)
     }
   };
 
-  const handleEditProfile = async () => {
-    const newUser = await editProfile(name, username, bio, image);
+  const handleEditProfile = async () => {avatarHash
+    const newUser = await editProfile(name, username, bio, avatarHash);
     if (!newUser) {
       Alert.alert(
         "Unknown Error",
@@ -85,7 +89,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
         save={handleEditProfile}
       />
 
-      <Image style={styles.image} source={{ uri: image }} />
+      <Image style={styles.image} source={{ uri: imageURL }} />
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={editImage}

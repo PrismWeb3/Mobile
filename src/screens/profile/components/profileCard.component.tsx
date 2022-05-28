@@ -14,7 +14,7 @@ export function ProfileCard(props: Props): JSX.Element {
       <View style={styles.row}>
         <Image
           style={styles.image}
-          source={{ uri: props.profile.image }}
+          source={{ uri: props.profile.imageURL }}
         />
 
         <View>

@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
+import { AsyncStorage } from "react-native";
 import { post } from "./helpers.ts";
 import {
-  arrayBufferToString,
   exportRSAKey,
   hash,
   importExistingKeypair,
@@ -10,7 +10,8 @@ import {
 import { Constants } from "@globals";
 import { globals } from "@globals/globals";
 import { encode as btoa } from "base-64";
-import { TextEncoder } from "text-encoding";
+import { Profile } from "@types";
+
 export const signUp = async (username: string, name: string) => {
   /*
         HP:
@@ -31,16 +32,17 @@ export const signUp = async (username: string, name: string) => {
   );
 
   // CHANGE THESE BACK TO 4096 POST TESTING!!!!!!!
-  const userKeypair = existingUserKey || await crypto.subtle.generateKey(
-    {
-      name: "RSASSA-PKCS1-v1_5",
-      modulusLength: 512,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256",
-    },
-    true,
-    ["sign", "verify"],
-  );
+  const userKeypair = existingUserKey ||
+    (await crypto.subtle.generateKey(
+      {
+        name: "RSASSA-PKCS1-v1_5",
+        modulusLength: 512,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: "SHA-256",
+      },
+      true,
+      ["sign", "verify"],
+    ));
   if (!existingUserKey) {
     await SecureStore.setItemAsync(
       Constants.SECURE_STORAGE_USER,
@@ -48,16 +50,17 @@ export const signUp = async (username: string, name: string) => {
     );
   }
 
-  const deviceKeypair = existingDeviceKey || await crypto.subtle.generateKey(
-    {
-      name: "RSASSA-PKCS1-v1_5",
-      modulusLength: 512,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256",
-    },
-    true,
-    ["sign", "verify"],
-  );
+  const deviceKeypair = existingDeviceKey ||
+    (await crypto.subtle.generateKey(
+      {
+        name: "RSASSA-PKCS1-v1_5",
+        modulusLength: 512,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: "SHA-256",
+      },
+      true,
+      ["sign", "verify"],
+    ));
 
   if (!existingDeviceKey) {
     await SecureStore.setItemAsync(
@@ -69,9 +72,7 @@ export const signUp = async (username: string, name: string) => {
   const unsignedDevice = {
     id: null,
     name: username + "'s device",
-    publicKey: btoa(
-      await exportRSAKey(deviceKeypair.publicKey, "public"),
-    ),
+    publicKey: btoa(await exportRSAKey(deviceKeypair.publicKey, "public")),
   };
 
   const deviceHash = await hash(JSON.stringify(unsignedDevice));
@@ -82,24 +83,23 @@ export const signUp = async (username: string, name: string) => {
       id: null,
       username: username,
       name: name,
-      publicKey: btoa(
-        await exportRSAKey(userKeypair.publicKey, "public"),
-      ),
+      // We'll handle bio & avatarHash post signup flow; the user can change these later in settings. Use defaults for now
+      bio: "",
+      avatarHash: Constants.DEFAULT_IPFS_HASH,
+      publicKey: btoa(await exportRSAKey(userKeypair.publicKey, "public")),
       deviceHash: deviceHash,
-      deviceSignature: await signRSA(
-        deviceHash,
-        deviceKeypair.privateKey,
-      ),
+      deviceSignature: await signRSA(deviceHash, deviceKeypair.privateKey),
       device: unsignedDevice,
     },
   };
 
+  const signature = await signRSA(
+    await hash(JSON.stringify(unsignedTX)),
+    userKeypair.privateKey,
+  );
   const request = {
     txHash: await hash(JSON.stringify(unsignedTX)),
-    signature: await signRSA(
-      await hash(JSON.stringify(unsignedTX)),
-      userKeypair.privateKey,
-    ),
+    signature: signature,
     tx: unsignedTX,
   };
 
@@ -109,17 +109,44 @@ export const signUp = async (username: string, name: string) => {
       "newUser",
       request,
     );
-    globals.loggedInUser = {
+    if (
+      newUser.username != username ||
+      newUser.name != name ||
+      newUser.userPublicKey !=
+        btoa(await exportRSAKey(userKeypair.publicKey, "public")) ||
+      newUser.clients[0].clientPublicKey !=
+        btoa(await exportRSAKey(deviceKeypair.publicKey, "public")) ||
+      newUser.clients[0].name != username + "'s device" ||
+      newUser.clients.length > 1 ||
+      newUser.chain.length > 1 ||
+      newUser.chain[0].signature != signature ||
+      newUser.avatarHash != Constants.DEFAULT_IPFS_HASH ||
+      newUser.bio != "" || newUser.followers != 0 || newUser.following != 0
+    ) {
+      // WE DO NOT TRUST THE SERVER!!! If any user data it sends to use doesn't match our request, ignore EVERYTHING!
+      // This definetly isn't 100% trustless yet, we need to integrate some more security using proofs. WE DO NOT TRUST THE SERVER!!
+      return false;
+    }
+    // The same issue re: verifacation mentioned in profile.ts exists here.
+    // https://github.com/PrismWeb3/Mobile/blob/d6e942f694efc9beb26fe87d4178a9327cb3f121/src/services/profile.ts#L64-L67
+    const profile = {
       id: newUser._id,
       userPublicKey: newUser.userPublicKey,
       username: newUser.username,
       name: newUser.name,
-      followers: newUser.followers,
-      following: newUser.following,
+      // These counts will, of course, always be 0 on account creation
+      followers: 0,
+      following: 0,
       bio: newUser.bio,
-      image: Constants.IPFS_GATEWAY_URL + newUser.avatarHash,
+      avatarHash: newUser.avatarHash,
+      imageURL: Constants.IPFS_GATEWAY_URL + newUser.avatarHash,
       verified: newUser.verifed,
-    };
+    } as Profile;
+    await AsyncStorage.setItem(
+      "loggedInUser",
+      JSON.stringify(profile),
+    );
+    globals.loggedInUser = profile;
     return true;
   } catch (e) {
     return false;

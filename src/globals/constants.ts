@@ -20,6 +20,6 @@ export class Constants {
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.1 Safari/605.1.15",
   };
 
-  public static readonly DEFAULT_PROFILE_PICTURE =
+  public static readonly DEFAULT_IPFS_HASH =
     "QmdXgbfR8pFxE11t1yCdomNWtgz8EaNKr5rqXYeBj1uwcS";
 }

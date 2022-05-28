@@ -15,14 +15,13 @@ import { ParamListBase } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Constants } from "@globals";
 import { signUp } from "@services";
-import { globals } from "@globals/globals";
+
 import { eventManager } from "@services";
 interface Props {
   navigation: StackNavigationProp<ParamListBase>;
 }
 
 export function SignUpScreen(props: Props): JSX.Element {
-  globals.webViewEnabled = true;
   const [username, setUsername] = useState<string>("");
   const [name, setName] = useState<string>("");
 
@@ -132,14 +131,15 @@ export function SignUpScreen(props: Props): JSX.Element {
             globalStyles.fontFamilyPrimary,
           ]}
         >
-          Already have an account?
+          Already have an account?{" "}
           <Text
             style={[
               globalStyles.fontColorAccent,
               globalStyles.fontFamilyPrimaryBold,
             ]}
             onPress={() => props.navigation.goBack()}
-          > Login
+          >
+            Login
           </Text>
         </Text>
       </View>

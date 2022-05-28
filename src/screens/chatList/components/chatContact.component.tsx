@@ -17,7 +17,7 @@ export function ChatContact(props: Props): JSX.Element {
     <View style={[styles.container, globalStyles.containerColorMain]}>
       <Image
         style={styles.image}
-        source={{ uri: contact.image }}
+        source={{ uri: contact.imageURL }}
       />
       <View style={styles.wrapper}>
         <View style={styles.messageHeader}>
