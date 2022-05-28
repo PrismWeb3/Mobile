@@ -1,4 +1,5 @@
 import { Constants } from "@globals";
+import { decode as atob } from "base-64";
 
 export const wait = (p_milliSeconds: number) =>
   new Promise((p_resolve) => setTimeout(p_resolve, p_milliSeconds));
@@ -63,3 +64,5 @@ export function handleResponse(response: Response): Promise<unknown> {
 export function copyObject<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj)) as T;
 }
+
+

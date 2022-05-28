@@ -138,7 +138,8 @@ export const signUp = async (username: string, name: string) => {
       followers: 0,
       following: 0,
       bio: newUser.bio,
-      image: Constants.IPFS_GATEWAY_URL + newUser.avatarHash,
+      avatarHash: newUser.avatarHash,
+      imageURL: Constants.IPFS_GATEWAY_URL + newUser.avatarHash,
       verified: newUser.verifed,
     } as Profile;
     await AsyncStorage.setItem(

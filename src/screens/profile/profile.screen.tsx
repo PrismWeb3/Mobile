@@ -22,6 +22,7 @@ export function ProfileScreen(props: Props): JSX.Element {
     loggedInUser,
   );
 
+
   const tabs: Tab[] = [
     {
       id: 0,
@@ -29,7 +30,7 @@ export function ProfileScreen(props: Props): JSX.Element {
     },
     /*{
       id: 1,
-      text: "NFTs",
+      text: "Posts",
     },*/
   ];
 

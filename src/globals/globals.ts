@@ -15,7 +15,8 @@ export let globals: Globals = {
     followers: 0,
     following: 0,
     bio: "",
-    image: Constants.IPFS_GATEWAY_URL + Constants.DEFAULT_IPFS_HASH,
+    avatarHash: Constants.DEFAULT_IPFS_HASH,
+    imageURL: Constants.IPFS_GATEWAY_URL + Constants.DEFAULT_IPFS_HASH,
     verified: false,
   },
 };

@@ -81,7 +81,8 @@ export const editProfile = async (
       followers: resp.followers,
       following: resp.following,
       bio: resp.bio,
-      image: resp.avatarHash,
+      avatarHash: resp.avatarHash,
+      imageURL: Constants.IPFS_GATEWAY_URL + resp.avatarHash,
       verified: resp.verifed,
     } as Profile;
     await AsyncStorage.setItem(
@@ -94,3 +95,38 @@ export const editProfile = async (
     return false;
   }
 };
+
+export const uploadImage = async (image: Blob) => {
+  console.log(image.type)
+  const userKeyPair = importExistingKeypair(
+    await SecureStore.getItemAsync(Constants.SECURE_STORAGE_USER),
+  );
+  // This should never happen, as the only way to open this screen is by having existing keys & being signed in
+  if (!userKeyPair) {
+    return false;
+  }
+  
+  const unsignedContext = {
+    id: globals.loggedInUser.id,
+    timestamp: new Date().getUTCMilliseconds(),
+    type: "avatar",
+    userPublicKey: globals.loggedInUser.userPublicKey
+  }
+  
+  const formdata = new FormData();
+  formdata.append("image", image)
+  formdata.append("context", JSON.stringify(unsignedContext))
+  formdata.append("contextHash", await hash(JSON.stringify(unsignedContext)))
+  formdata.append("signature", await signRSA(
+    await hash(JSON.stringify(unsignedContext)),
+    userKeyPair.privateKey,
+  ))
+  formdata.append("data", JSON.stringify(image))
+
+  const res = await fetch("http://localhost:7621/uploadImage", {
+    method: 'POST',
+    body: formdata,
+  })
+  console.log(res.status)
+
+}

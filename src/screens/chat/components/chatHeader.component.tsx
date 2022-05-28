@@ -23,7 +23,7 @@ export function ChatHeader(props: Props): JSX.Element {
 
       <Image
         style={styles.image}
-        source={{ uri: props.contact.image }}
+        source={{ uri: props.contact.imageURL }}
       />
 
       <Text

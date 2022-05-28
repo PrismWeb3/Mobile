@@ -72,7 +72,7 @@ export default function App() {
   const prepare = async () => {
     try {
       await SplashScreen.preventAutoHideAsync();
-      // Uncomment if you need to reset storage; Should probally make a "logout" button for this
+      // Uncomment if you need to reset storage; Eventually will build a logout button 
       // await AsyncStorage.removeItem("loggedInUser");
       const store = await AsyncStorage.getItem("loggedInUser");
       if (store) {
